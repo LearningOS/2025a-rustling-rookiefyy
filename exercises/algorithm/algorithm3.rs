@@ -4,9 +4,33 @@
 	you can use bubble sorting, insertion sorting, heap sorting, etc.
 */
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn sort<T: Ord>(array: &mut [T]) {
+    if array.len() <= 1 {
+        return;
+    }
+
+    let pivot_index = partition(array);
+    sort(&mut array[0..pivot_index]);
+    sort(&mut array[pivot_index + 1..]);
 }
+
+// 分区函数：将小于等于 pivot 的元素移到左边，大于的移到右边
+// 返回 pivot 的最终位置
+fn partition<T: Ord>(array: &mut [T]) -> usize {
+    let len = array.len();
+    let pivot_index = len - 1;
+    let mut i = 0; // i 指向小于等于 pivot 的区域的下一个位置
+
+    for j in 0..pivot_index {
+        if array[j] <= array[pivot_index] {
+            array.swap(i, j);
+            i += 1;
+        }
+    }
+    array.swap(i, pivot_index);
+    i
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -17,13 +41,15 @@ mod tests {
         sort(&mut vec);
         assert_eq!(vec, vec![19, 37, 46, 57, 64, 73, 75, 91]);
     }
-	#[test]
+
+    #[test]
     fn test_sort_2() {
         let mut vec = vec![1];
         sort(&mut vec);
         assert_eq!(vec, vec![1]);
     }
-	#[test]
+
+    #[test]
     fn test_sort_3() {
         let mut vec = vec![99, 88, 77, 66, 55, 44, 33, 22, 11];
         sort(&mut vec);
